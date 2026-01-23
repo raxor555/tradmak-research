@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TradeFlow | Market Intelligence</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['"IBM Plex Sans"', 'sans-serif'],
+              mono: ['"IBM Plex Mono"', 'monospace'],
+            },
+            colors: {
+              trade: {
+                bg: '#FDFCFB', // High-end ivory
+                surface: '#FFFFFF',
+                card: '#F4F4F5',
+                border: '#E4E4E7',
+                accent: '#2563EB', // Precision Blue
+                accentDeep: '#1E40AF',
+                text: '#09090B', // Zinc 950
+                muted: '#71717A', // Zinc 500
+              }
+            },
+            animation: {
+              'fade-in': 'fadeIn 0.5s ease-out forwards',
+              'slide-up': 'slideUp 0.4s ease-out forwards',
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' }
+              },
+              slideUp: {
+                '0%': { transform: 'translateY(10px)', opacity: '0' },
+                '100%': { transform: 'translateY(0)', opacity: '1' }
+              }
+            }
+          },
+        },
+      }
+    </script>
+    <style>
+      body {
+        background-color: #FDFCFB;
+        color: #09090B;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+      }
+      
+      .fine-grid {
+        background-image: radial-gradient(#E4E4E7 0.5px, transparent 0.5px);
+        background-size: 24px 24px;
+      }
+
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 4px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #FDFCFB;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #D4D4D8;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #2563EB;
+      }
+
+      .soft-shadow {
+        box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.04);
+      }
+
+      input, textarea {
+        background: transparent;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://esm.sh/@google/genai@^1.38.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "recharts": "https://esm.sh/recharts@^3.7.0"
+  }
+}
+</script>
+</head>
+  <body class="fine-grid">
+    <div id="root"></div>
+  </body>
+</html>
