@@ -36,6 +36,15 @@ export const generateResearchReport = async (config: ResearchConfig): Promise<Re
     3. Assess market opportunities and risks.
     4. Provide quantitative data wherever possible (volumes, YoY growth, prices).
     5. Generate a dataset for visualizing the findings over the last 4-6 time periods (quarters or years).
+    6. SEARCH FOR AND EXTRACT REAL TRADE DATA from the last 3 years using the Google Search tool.
+       - DO NOT GENERATE SIMULATED OR "REALISTIC" DATA. USE ONLY REAL DATA FOUND IN SEARCH RESULTS.
+       - Look for: Customs reports, Ministry of Commerce export statistics, USGS Mineral Commodity Summaries, UN Comtrade summaries, or industry market reports.
+       - If row-level transaction data (specific dates/shipments) is unavailable (as it is often proprietary), provide the BEST AVAILABLE AGGREGATED DATA (e.g., Monthly exports to top destinations, or Yearly volumes).
+       - Map found data to the 'tradeData' structure. 
+       - If a field like "Port of Loading" is not in the found report, use "N/A" or the Country name.
+       - If "HS Code" is not specified in the text, use the standard HS code for the commodity (e.g., 2511.10 for Barite).
+       - Ensure the 'quantity' and 'totalValueUSD' are actual numbers found in your research.
+       - CRITICAL: Include the specific 'sourceUrl' for each data row where you found this information.
 
     OUTPUT FORMAT:
     You must return a single valid JSON object. 
@@ -57,6 +66,20 @@ export const generateResearchReport = async (config: ResearchConfig): Promise<Re
       "opportunities": "Strategic recommendations and market gaps.",
       "chartData": [
         { "name": "Q1 2024", "Import": 1200, "Export": 900 }
+      ],
+      "tradeData": [
+        {
+          "date": "2023-11-21",
+          "hsCode": "25111020",
+          "description": "BARITE POWDER PACKED IN 1.5 M.TON BAG",
+          "destination": "United Arab Emirates",
+          "portOfLoading": "KATTUPALLI",
+          "unit": "KGS",
+          "quantity": 270000,
+          "totalValueUSD": 30147,
+          "pricePerUnitUSD": 0.11,
+          "sourceUrl": "https://example.com/report"
+        }
       ]
     }
   `;
@@ -68,6 +91,7 @@ export const generateResearchReport = async (config: ResearchConfig): Promise<Re
       config: {
         tools: [{ googleSearch: {} }],
         thinkingConfig: { thinkingBudget: 2048 },
+        responseMimeType: 'application/json'
       }
     });
 
@@ -88,7 +112,8 @@ export const generateResearchReport = async (config: ResearchConfig): Promise<Re
         productBreakdown: "Processing Error",
         trends: "Processing Error",
         opportunities: "Processing Error",
-        chartData: []
+        chartData: [],
+        tradeData: []
       };
     }
     

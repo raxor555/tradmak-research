@@ -3,6 +3,7 @@ import { ResearchReport } from '../types';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, Legend } from 'recharts';
 import { Download, ExternalLink, ArrowLeft, Printer, Share2 } from 'lucide-react';
 import { Button } from './Button';
+import { TradeDataTable } from './TradeDataTable';
 
 interface ReportDisplayProps {
   report: ResearchReport;
@@ -11,6 +12,7 @@ interface ReportDisplayProps {
 
 export const ReportDisplay: React.FC<ReportDisplayProps> = ({ report, onReset }) => {
   const chartData = report.chartData && report.chartData.length > 0 ? report.chartData : [];
+  const tradeData = report.tradeData || [];
 
   return (
     <div className="w-full max-w-6xl mx-auto px-6 py-8 animate-fade-in">
@@ -87,6 +89,11 @@ export const ReportDisplay: React.FC<ReportDisplayProps> = ({ report, onReset })
                 )}
               </div>
             ))}
+          </section>
+
+          {/* Trade Data Table */}
+          <section className="space-y-6">
+             <TradeDataTable data={tradeData} />
           </section>
         </div>
 

@@ -20,6 +20,19 @@ export interface ChartDataPoint {
   [key: string]: any;
 }
 
+export interface TradeRecord {
+  date: string;
+  hsCode: string;
+  description: string;
+  destination: string;
+  portOfLoading: string;
+  unit: string;
+  quantity: number;
+  totalValueUSD: number;
+  pricePerUnitUSD: number;
+  sourceUrl?: string;
+}
+
 export interface ResearchReport {
   executiveSummary: string;
   regionalAnalysis: {
@@ -31,6 +44,7 @@ export interface ResearchReport {
   trends: string;
   opportunities: string;
   chartData: ChartDataPoint[];
+  tradeData: TradeRecord[];
   sources: { title: string; uri: string }[];
   generatedAt: string;
 }
