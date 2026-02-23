@@ -16,7 +16,10 @@ export default defineConfig(({ mode }) => {
       define: {
         // Define both variants to be safe
         'process.env.API_KEY': JSON.stringify(apiKey),
-        'process.env.GEMINI_API_KEY': JSON.stringify(apiKey)
+        'process.env.GEMINI_API_KEY': JSON.stringify(apiKey),
+        // Also expose as VITE_ var for "Vite-way" access
+        'import.meta.env.VITE_GEMINI_API_KEY': JSON.stringify(apiKey),
+        'import.meta.env.VITE_API_KEY': JSON.stringify(apiKey)
       },
       resolve: {
         alias: {
