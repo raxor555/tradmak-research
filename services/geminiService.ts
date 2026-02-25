@@ -2,10 +2,25 @@ import { GoogleGenAI } from "@google/genai";
 import { ResearchConfig, ResearchReport } from "../types";
 
 const initGenAI = () => {
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY || process.env.GEMINI_API_KEY || process.env.API_KEY;
+  let apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  let source = "VITE_GEMINI_API_KEY";
+
+  if (!apiKey) {
+    apiKey = process.env.GEMINI_API_KEY;
+    source = "process.env.GEMINI_API_KEY";
+  }
+  if (!apiKey) {
+    apiKey = process.env.API_KEY;
+    source = "process.env.API_KEY";
+  }
+
   if (!apiKey) {
     throw new Error("API Key not found");
   }
+
+  // Log the source to help debugging (safe partial log)
+  console.log(`[System] Using API Key from: ${source} (Prefix: ${apiKey.substring(0, 4)}...)`);
+
   return new GoogleGenAI({ apiKey });
 };
 
@@ -137,8 +152,14 @@ export const generateResearchReport = async (config: ResearchConfig): Promise<Re
       generatedAt: new Date().toISOString(),
     };
 
-  } catch (error) {
+  } catch (error: any) {
     console.error("Gemini API Error:", error);
+    
+    // Check for specific API key leaked error
+    if (error.status === 403 || (error.message && error.message.includes("API key was reported as leaked"))) {
+      throw new Error("API_KEY_LEAKED");
+    }
+    
     throw error;
   }
 };

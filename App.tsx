@@ -16,9 +16,15 @@ const App: React.FC = () => {
       const result = await generateResearchReport(config);
       setReport(result);
       setView('report');
-    } catch (error) {
+    } catch (error: any) {
       console.error("Analysis Failed", error);
-      alert("Analysis failed. Please check your API key and try again.");
+      
+      if (error.message === "API_KEY_LEAKED") {
+        alert("CRITICAL ERROR: Your API key has been flagged as leaked by Google and blocked for security.\n\nPlease generate a NEW API key in Google AI Studio and update your environment variables.");
+      } else {
+        alert("Analysis failed. Please check your network connection and API key.");
+      }
+      
       setView('input');
     }
   };
