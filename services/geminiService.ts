@@ -26,9 +26,9 @@ const initGenAI = () => {
 
 export const generateResearchReport = async (config: ResearchConfig): Promise<ResearchReport> => {
   const ai = initGenAI();
-  
+
   // Construct a prompt that guides the model to perform "deep research"
-  // We use gemini-3-pro-preview for complex reasoning and googleSearch for grounding.
+  // We use gemini-2.5-flash for speed and googleSearch for grounding.
 
   const prompt = `
     You are an expert trade analyst specializing in chemical products import/export research.
@@ -101,17 +101,16 @@ export const generateResearchReport = async (config: ResearchConfig): Promise<Re
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-3-pro-preview',
+      model: 'gemini-2.5-flash',
       contents: prompt,
       config: {
         tools: [{ googleSearch: {} }],
-        thinkingConfig: { thinkingBudget: 2048 },
-        responseMimeType: 'application/json'
+        thinkingConfig: { thinkingBudget: 2048 }
       }
     });
 
     let jsonText = response.text || "{}";
-    
+
     // Clean up markdown if the model ignores the "no markdown" instruction
     jsonText = jsonText.replace(/```json/g, '').replace(/```/g, '').trim();
 
@@ -131,7 +130,7 @@ export const generateResearchReport = async (config: ResearchConfig): Promise<Re
         tradeData: []
       };
     }
-    
+
     // Extract sources from grounding metadata
     const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
     const sources = groundingChunks
@@ -144,22 +143,45 @@ export const generateResearchReport = async (config: ResearchConfig): Promise<Re
       .filter((source: any) => source !== null);
 
     // Dedup sources
-    const uniqueSources = Array.from(new Map(sources.map((item: any) => [item.uri, item])).values()) as {title: string, uri: string}[];
+    const uniqueSources = Array.from(new Map(sources.map((item: any) => [item.uri, item])).values()) as { title: string, uri: string }[];
+
+    // Sanitize numeric fields to ensure the UI doesn't crash
+    const sanitizedTradeData = (data.tradeData || []).map((row: any) => ({
+      ...row,
+      quantity: Number(row.quantity) || 0,
+      totalValueUSD: Number(row.totalValueUSD) || 0,
+      pricePerUnitUSD: Number(row.pricePerUnitUSD) || 0,
+    }));
+
+    const sanitizedChartData = (data.chartData || []).map((point: any) => {
+      const sanitizedPoint = { ...point };
+      if ('Import' in sanitizedPoint) sanitizedPoint.Import = Number(sanitizedPoint.Import) || 0;
+      if ('Export' in sanitizedPoint) sanitizedPoint.Export = Number(sanitizedPoint.Export) || 0;
+      if ('value' in sanitizedPoint) sanitizedPoint.value = Number(sanitizedPoint.value) || 0;
+      return sanitizedPoint;
+    });
 
     return {
       ...data,
+      tradeData: sanitizedTradeData,
+      chartData: sanitizedChartData,
       sources: uniqueSources,
       generatedAt: new Date().toISOString(),
     };
 
   } catch (error: any) {
     console.error("Gemini API Error:", error);
-    
+
     // Check for specific API key leaked error
     if (error.status === 403 || (error.message && error.message.includes("API key was reported as leaked"))) {
       throw new Error("API_KEY_LEAKED");
     }
-    
+
+    // Check for quota exceeded error (429)
+    if (error.status === 429 || (error.message && error.message.includes("quota"))) {
+      throw new Error("QUOTA_EXCEEDED");
+    }
+
     throw error;
   }
 };

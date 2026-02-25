@@ -10,7 +10,7 @@ interface TradeDataTableProps {
 export const TradeDataTable: React.FC<TradeDataTableProps> = ({ data }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 10;
-  
+
   const totalPages = Math.ceil(data.length / rowsPerPage);
   const startIndex = (currentPage - 1) * rowsPerPage;
   const currentData = data.slice(startIndex, startIndex + rowsPerPage);
@@ -101,15 +101,15 @@ export const TradeDataTable: React.FC<TradeDataTableProps> = ({ data }) => {
                   <td className="p-3 text-[10px] font-sans text-trade-text">{row.destination}</td>
                   <td className="p-3 text-[10px] font-sans text-trade-text">{row.portOfLoading}</td>
                   <td className="p-3 text-[10px] font-mono text-trade-muted text-center">{row.unit}</td>
-                  <td className="p-3 text-[10px] font-mono text-trade-text text-right font-bold">{row.quantity.toLocaleString()}</td>
-                  <td className="p-3 text-[10px] font-mono text-trade-text text-right">{row.totalValueUSD.toLocaleString()}</td>
-                  <td className="p-3 text-[10px] font-mono text-trade-text text-right">{row.pricePerUnitUSD.toFixed(2)}</td>
+                  <td className="p-3 text-[10px] font-mono text-trade-text text-right font-bold">{(Number(row.quantity) || 0).toLocaleString()}</td>
+                  <td className="p-3 text-[10px] font-mono text-trade-text text-right">{(Number(row.totalValueUSD) || 0).toLocaleString()}</td>
+                  <td className="p-3 text-[10px] font-mono text-trade-text text-right">{(Number(row.pricePerUnitUSD) || 0).toFixed(2)}</td>
                   <td className="p-3 text-center">
                     {row.sourceUrl ? (
-                      <a 
-                        href={row.sourceUrl} 
-                        target="_blank" 
-                        rel="noopener noreferrer" 
+                      <a
+                        href={row.sourceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="inline-flex items-center justify-center text-trade-muted hover:text-trade-accent transition-colors"
                         title="View Source"
                       >
@@ -124,7 +124,7 @@ export const TradeDataTable: React.FC<TradeDataTableProps> = ({ data }) => {
             </tbody>
           </table>
         </div>
-        
+
         {/* Pagination */}
         {totalPages > 1 && (
           <div className="bg-trade-bg border-t border-trade-border p-3 flex items-center justify-between">
@@ -132,14 +132,14 @@ export const TradeDataTable: React.FC<TradeDataTableProps> = ({ data }) => {
               Showing {startIndex + 1}-{Math.min(startIndex + rowsPerPage, data.length)} of {data.length} records
             </span>
             <div className="flex gap-1">
-              <button 
+              <button
                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
                 className="p-1 hover:bg-white hover:shadow-sm border border-transparent hover:border-trade-border rounded disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:shadow-none"
               >
                 <ChevronLeft className="w-4 h-4 text-trade-text" />
               </button>
-              <button 
+              <button
                 onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
                 className="p-1 hover:bg-white hover:shadow-sm border border-transparent hover:border-trade-border rounded disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:shadow-none"
